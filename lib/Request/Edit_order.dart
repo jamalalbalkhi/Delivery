@@ -1,27 +1,51 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:untitled/models/products.dart';
+
 import '../Services/api/auth.dart';
-import '../shared/components/constantes.dart';
-class Basketscreen extends StatefulWidget {
+
+class EditOrderScreen extends StatefulWidget {
+  int? id;
+  EditOrderScreen({super.key,this.id});
+
   @override
-  State<Basketscreen> createState() => _BasketscreenState();
+  State<EditOrderScreen> createState() => _EditOrderScreenState();
 }
-class _BasketscreenState extends State<Basketscreen> {
+
+class _EditOrderScreenState extends State<EditOrderScreen> {
+  List<product> orderProducts=[];
+  var loading=false;
+  @override
+  void initState() {
+    super.initState();
+    getOrderProducts();
+  }
+  getOrderProducts()async{
+    setState(() {
+      loading=true;
+    });
+    var data=await getOrderProducts_endpoint(widget.id);
+    setState(() {
+      orderProducts=data;
+      loading=false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: shoppingCart.isEmpty
+      appBar: AppBar(title: Text('Edit Order'),),
+      body: orderProducts.isEmpty
           ? Center(
         child: Text(
-          'Your cart is empty!',
+          'the order is empty',
           style: TextStyle(fontSize: 20),
         ),
       )
           : ListView.builder(
-        itemCount: shoppingCart.length,
+        itemCount: orderProducts.length,
         itemBuilder: (context, index) {
-          final item = shoppingCart[index];
+          final item = orderProducts[index];
           return Card(
             child: ListTile(
               leading: Image.network(item.photo??"", width: 50, height: 50),
@@ -30,14 +54,14 @@ class _BasketscreenState extends State<Basketscreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Price: ${item.price}'),
-                  Text('count: ${item.count}'),
+                  Text('Quantity: ${item.quantity}'),
                 ],
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.check_circle, color: Colors.green),
+                    icon: Icon(Icons.edit),
                     onPressed: () async{
                       await showCupertinoDialog(
                         context: context,
@@ -45,38 +69,36 @@ class _BasketscreenState extends State<Basketscreen> {
                           return StatefulBuilder(
                             builder: (BuildContext context, StateSetter setState) {
                               return CupertinoAlertDialog(
-                                title: Text("Order"),
-                                // content: Row(
-                                //   children: [
-                                //     IconButton(
-                                //       onPressed: () {
-                                //         setState(() {
-                                //           item.quantity++;
-                                //         });
-                                //       },
-                                //       icon: Icon(Icons.add),
-                                //     ),
-                                //     SizedBox(width: 10),
-                                //     Text("Quantity: ${item.quantity}"),
-                                //     SizedBox(width: 10),
-                                //     IconButton(
-                                //       onPressed: () {
-                                //         if(item.quantity>0)
-                                //         setState(() {
-                                //           item.quantity--;
-                                //         });
-                                //       },
-                                //       icon: Icon(Icons.exposure_minus_1),
-                                //     ),
-                                //   ],
-                                // ),
+                                title: Text("edit quantity"),
+                                content: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          item.quantity++;
+                                        });
+                                      },
+                                      icon: Icon(Icons.add),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text("Quantity: ${item.quantity}"),
+                                    SizedBox(width: 10),
+                                    IconButton(
+                                      onPressed: () {
+                                        if(item.quantity>1)
+                                        setState(() {
+                                          item.quantity--;
+                                        });
+                                      },
+                                      icon: Icon(Icons.exposure_minus_1),
+                                    ),
+                                  ],
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () async{
                                       setState((){
                                         if (item.quantity > 0) {
-                                          orders.add(item);
-                                          item.count = item.count! - item.quantity;
                                         } else {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
@@ -86,12 +108,6 @@ class _BasketscreenState extends State<Basketscreen> {
                                         }
                                       });
                                       Get.close(0);
-                                      await createOrder([item]);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('${item.name} ordered!'),
-                                        ),
-                                      );
                                     },
                                     child: Text('Save'),
                                   ),
@@ -114,7 +130,7 @@ class _BasketscreenState extends State<Basketscreen> {
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
                       setState(() {
-                        shoppingCart.removeAt(index);
+                        orderProducts.removeAt(index);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text('${item.name} removed!')),
@@ -129,10 +145,12 @@ class _BasketscreenState extends State<Basketscreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(onPressed:()async{
-        if(shoppingCart.isNotEmpty) {
-          await createOrder(shoppingCart);
-          shoppingCart.clear();
+        if(orderProducts.isNotEmpty) {
+          //await createOrder(orderProducts);
+          await Edit_order_endpoint(widget.id,orderProducts);
+          Get.back();
         }
-      },child: Icon(Icons.request_page),  ),
+      },child: Icon(Icons.save),  ),
     );
   }}
+

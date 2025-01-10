@@ -22,7 +22,7 @@ import 'cubit/cubitScreen.dart';
         listener: (BuildContext context, loginstates state) {  },
         builder: (BuildContext context, loginstates state) {
           var cubit =logincubit.get(context);
-          return          Scaffold(
+          return  Scaffold(
             appBar: AppBar(),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -82,7 +82,6 @@ import 'cubit/cubitScreen.dart';
                               }
                               return null;
                             }
-
                         ),
                         SizedBox(
                           height: 20,
@@ -104,9 +103,6 @@ import 'cubit/cubitScreen.dart';
                               print(phonecontroller.text);
                               print(passwordcontroller.text);
                             }
-
-
-
                           },
                           background: Colors.orange,
                         ),
@@ -133,9 +129,6 @@ import 'cubit/cubitScreen.dart';
                                 child: Text('Register Now'))
                           ],
                         ),
-
-
-
 
                       ],
                     ),

@@ -11,14 +11,14 @@ class RigesterCubit extends Cubit<RegisterState> {
   TextEditingController LastNameController = TextEditingController();
   TextEditingController LocationController = TextEditingController();
 
-  bool isPassword=true;
+  bool isPassword = true;
+
   void changePasswordVisibility() {
     isPassword = !isPassword;
     emit(Registerchange());
-
   }
 
-  RigesterCubit() :super(RegisterInitial());
+  RigesterCubit() : super(RegisterInitial());
 
   RigesterCubit get(context) => BlocProvider.of(context);
   String firstName = '';
@@ -26,30 +26,27 @@ class RigesterCubit extends Cubit<RegisterState> {
   String location = '';
   String imageUrl = '';
 
-  void updateFirstName(String value){
+  void updateFirstName(String value) {
     emit(Registerchange());
-
-  }
-  void updatephone(String value){
-    emit(Registerchange());
-
-  }
-  void updatepassword(String value){
-    emit(Registerchange());
-
   }
 
-  void updateSecoundName(String value){
+  void updatephone(String value) {
     emit(Registerchange());
-
-  }
-  void updateLocation(String value){
-    emit(Registerchange());
-
-  }
-  void updateImageUrl(String value){
-    emit(Registerchange());
-
   }
 
+  void updatepassword(String value) {
+    emit(Registerchange());
+  }
+
+  void updateSecoundName(String value) {
+    emit(Registerchange());
+  }
+
+  void updateLocation(String value) {
+    emit(Registerchange());
+  }
+
+  void updateImageUrl(String value) {
+    emit(Registerchange());
+  }
 }

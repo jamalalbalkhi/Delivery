@@ -10,17 +10,17 @@ class UserModel {
       );
 }
 class User {
-  int? id;
-  String? firstName;
-  String? lastName;
-  int? phoneNumber;
-  Null? location;
-  Null? profilePicture;
-  Null? email;
-  Null? emailVerifiedAt;
-  String? role;
-  String? createdAt;
-  String? updatedAt;
+  var id;
+  var firstName;
+  var lastName;
+  var phoneNumber;
+  var location;
+  var profilePicture;
+  var email;
+  var emailVerifiedAt;
+  var role;
+  var createdAt;
+  var updatedAt;
 
   User(
       {this.id,
@@ -41,7 +41,7 @@ class User {
     lastName = json['last_name'];
     phoneNumber = json['phone_number'];
     location = json['location'];
-    profilePicture = json['profile-picture'];
+    profilePicture = json['profile_picture'];
     email = json['email'];
     emailVerifiedAt = json['email_verified_at'];
     role = json['role'];

@@ -166,7 +166,8 @@ class Messengerscreen extends StatelessWidget {
                       child: Text(
                         'Hello my name is Ronaldo',
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis,),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(

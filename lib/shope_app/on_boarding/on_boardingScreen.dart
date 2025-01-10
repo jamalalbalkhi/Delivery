@@ -49,12 +49,24 @@ class _OnBoardingscreenState extends State<OnBoardingscreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          TextButton(onPressed: ()
-          {
+          TextButton(
+      onPressed: ()
+      { Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(
+          builder: (context) => Loginscreen()),
+      (route) {
+      return false;
 
+              }
+              );
+      },
+      child: Text('Skip',style: TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
 
-          },
-              child: Text('Skip'))
+      ),)),
+
         ],
       ),
       body: Padding(
@@ -104,6 +116,7 @@ class _OnBoardingscreenState extends State<OnBoardingscreen> {
                     count: boarding.length),
                 Spacer(),
                 FloatingActionButton(
+
                   onPressed: ()
                   {
                     if (islast) {
@@ -120,14 +133,17 @@ class _OnBoardingscreenState extends State<OnBoardingscreen> {
                         (
                           duration: Duration(
                             milliseconds: 750,
+
                           ),
-                          curve: Curves.bounceInOut
+                          curve: Curves.fastLinearToSlowEaseIn
                       );
                     }
 
 
                    },
-                  child: Icon(Icons.arrow_forward_ios),),
+                  child: Icon(Icons.arrow_forward_ios),
+                backgroundColor: Colors.orange,
+                ),
               ],
             ),
 
@@ -145,7 +161,6 @@ class _OnBoardingscreenState extends State<OnBoardingscreen> {
       Expanded(
           child: Image
             (image: AssetImage('${model.image}'),
-            fit: BoxFit.cover,
           )
       ),
       SizedBox(

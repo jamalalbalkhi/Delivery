@@ -1,12 +1,47 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:untitled/Services/api/auth.dart';
 import 'package:untitled/models/user/usermodel.dart';
-
 import 'Cubit/States.dart';
 import 'Cubit/cubit.dart';
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool loading=false;
+  late User? user;
+  File imageProfile=File('');
+  @override
+  void initState() {
+    super.initState();
+    getProfile();
+  }
+  getProfile()async{
+    setState(() {
+      loading=true;
+    });
+    var data=await profile_endpoint();
+    setState(() {
+      loading=false;
+      user=data;
+    });
+  }
+  Future<void> pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
 
-class ProfileScreen extends StatelessWidget {
+    final XFile? pickedFile = await picker.pickImage(source: source);
 
+    if (pickedFile != null) {
+      setState(() {
+        imageProfile = File(pickedFile.path);
+      });
+
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +54,9 @@ class ProfileScreen extends StatelessWidget {
           {
             var cubit=profilecubit().get(context);
             return   Scaffold(
-              body: Center(
+              body: loading==true?
+                  Center(child: CircularProgressIndicator(),)
+                  :Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SingleChildScrollView(
@@ -32,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                             children: [
                               CircleAvatar(
                                 radius: 100,
-                                backgroundImage: AssetImage('assets/images/pppp.jpg'),
+                                backgroundImage: user!.profilePicture==null? imageProfile.path.isEmpty?AssetImage('assets/images/pppp.jpg'):FileImage(imageProfile):NetworkImage(user!.profilePicture),
                               ),
                               Padding(
                                 padding: const EdgeInsetsDirectional.only(
@@ -42,11 +79,7 @@ class ProfileScreen extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 20,
                                   backgroundColor: Colors.white,
-                                  child: IconButton(icon: Icon(Icons.camera_alt_outlined),onPressed:(){
-                                    cubit.updateImageUrl('assets/images/gg.jpg');
-
-
-                                  } ,),
+                                  child: IconButton(icon: Icon(Icons.camera_alt_outlined),onPressed:()=>pickImage(ImageSource.gallery)),
                                 ),
 
                               ),
@@ -56,18 +89,21 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                         TextField(
-                          decoration: const InputDecoration(
-                            labelText: 'First Name',
+                          decoration:  InputDecoration(
+                            hintText: user?.firstName,
+                            labelText: user?.firstName,
                             prefixIcon: Icon(Icons.person),
                           ),
                           onChanged: (value) {
+
                             cubit.updateFirstName(value);
                           },
 
                         ),
                         TextField(
-                          decoration: const InputDecoration(
-                            labelText: 'Last Name',
+                          decoration:  InputDecoration(
+                            hintText: user?.lastName,
+                            labelText: user?.lastName,
                             prefixIcon: Icon(Icons.person),
                           ),
                           onChanged: (value) {
@@ -75,8 +111,9 @@ class ProfileScreen extends StatelessWidget {
                           },
                         ),
                         TextField(
-                          decoration: const InputDecoration(
-                            labelText: 'Location',
+                          decoration:  InputDecoration(
+                            hintText: user?.location,
+                            labelText: user?.location??'Location',
                             prefixIcon: Icon(Icons.location_on_sharp),
 
                           ),
@@ -99,7 +136,10 @@ class ProfileScreen extends StatelessWidget {
                             ),
 
                             child: MaterialButton(
-                              onPressed: (){},
+                              onPressed: ()async{
+                                await Upload_imagprofile(imageProfile);
+                                getProfile();
+                              },
                               child: const Text(
                                 'Save',
                               ),
